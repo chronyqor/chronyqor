@@ -42,22 +42,15 @@ dependencies {
     // Мониторинг и метрики
     implementation("io.micrometer:micrometer-registry-prometheus")
 
-    // MapStruct для маппинга DTO ↔ Entity
+    // Annotation Processors Order
+    compileOnly("org.projectlombok:lombok")
     implementation("org.mapstruct:mapstruct:1.5.5.Final")
-    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
-
-    // База данных для production (раскомментируйте нужную)
-    // runtimeOnly("org.postgresql:postgresql")
-    // runtimeOnly("com.mysql:mysql-connector-j")
-
-    // База данных для тестирования (H2 in-memory)
+    runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("com.h2database:h2")
 
-    // Утилиты
-    compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
-    testCompileOnly("org.projectlombok:lombok")
-    testAnnotationProcessor("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok-mapstruct-binding:0.2.0")
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
 
     // Тестирование
     testImplementation("org.springframework.boot:spring-boot-starter-test")
