@@ -108,4 +108,4 @@ Chronyqor uses **Testcontainers** for robust integration testing against a real 
 Detailed instructions can be found in the [User Guide](USER_GUIDE.md).
 
 ## 📄 License
-This project is licensed under the MIT License.
+This project is licensed under the MIT License.
