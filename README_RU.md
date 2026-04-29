@@ -1,205 +1,111 @@
-# `planicore` — REST API для управления задачами (To-Do)
+# Chronyqor — Корпоративное Full-Stack приложение для управления задачами
 
-Этот проект представляет собой современное Spring Boot приложение, реализующее RESTful API для управления списком задач (To-Do). Проект разработан с использованием лучших практик и включает в себя автоматизированную CI/CD пайплайн, контейнеризацию и инструменты для тестирования.
-
----
-
-## 📋 Описание
-
-**`planicore`** — это серверная часть приложения для управления задачами. Он предоставляет CRUD-операции (создание, чтение, обновление, удаление) для сущности `Task`, а также стандартные эндпоинты мониторинга через Spring Boot Actuator.
-
-### 🔧 Функциональность
-- Создание новой задачи (`POST /api/v1/tasks`)
-- Получение списка всех задач (`GET /api/v1/tasks`)
-- Получение задачи по ID (`GET /api/v1/tasks/{id}`)
-- Обновление задачи (`PUT /api/v1/tasks/{id}`)
-- Удаление задачи (`DELETE /api/v1/tasks/{id}`)
-- Проверка состояния сервиса (`GET /actuator/health`, `GET /ready`)
-
-Каждая задача содержит:
-- Заголовок (`title`)
-- Описание (`description`)
-- Статус: `TODO`, `IN_PROGRESS`, `DONE`
-- Дата выполнения (`dueDate`)
-- Даты создания и обновления
+Chronyqor — это комплексное, готовое к эксплуатации full-stack приложение. Оно включает защищенный REST API на Spring Boot, высокопроизводительный слой кэширования Redis и премиальный фронтенд в стиле glassmorphism. Построенное на современных архитектурных паттернах, оно ориентировано на безопасность, масштабируемость и исключительный пользовательский опыт.
 
 ---
 
-## 🛠️ Технологии
+## 🚀 Ключевые особенности
 
-| Категория | Используемые технологии |
-|---------|------------------------|
-| **Язык и платформа** | Java 21, Spring Boot 3.5.5 |
-| **Сборка** | Gradle 8.14.3 |
-| **ORM и БД** | Spring Data JPA, Hibernate, PostgreSQL (prod), H2 (dev/test) |
-| **Миграции** | Flyway |
-| **Маппинг DTO** | MapStruct 1.5.5 |
-| **Тестирование** | JUnit 5, Testcontainers, Mockito |
-| **Контейнеризация** | Docker, Docker Compose |
-| **CI/CD** | GitHub Actions |
-| **API-документация** | Postman-коллекция |
+### 🛡️ Продвинутая безопасность
+- **JWT и Refresh Tokens**: Безопасная аутентификация без сохранения состояния с ротацией refresh-токенов для длительных сессий.
+- **Блокировка аккаунта**: Защита от перебора паролей (brute-force), блокирующая аккаунт после 5 неудачных попыток входа.
+- **Изоляция данных**: Криптографически защищенное владение данными; пользователи имеют доступ только к своей информации.
+
+### ⚡ Производительность и масштабируемость
+- **Кэширование Redis**: Высокоскоростное кэширование списка задач для минимизации нагрузки на базу данных.
+- **Пагинация и сортировка**: Эффективная обработка данных с использованием Spring Data Pagination.
+- **Оптимизированный Docker**: Многоэтапные сборки и слоистые JAR-файлы для быстрого развертывания.
+
+### 📋 Корпоративная логика
+- **Полный аудит**: Автоматическое отслеживание создателя (`createdBy`) и времени изменения (`lastModifiedAt`) через JPA Auditing.
+- **Email-уведомления**: Интегрированный почтовый сервис для приветственных писем и системных уведомлений.
+- **Стандартизированный API**: Обработка ошибок согласно RFC 9457 и полная документация OpenAPI/Swagger.
+
+### 🎨 Премиальный фронтенд
+- **Современный UI**: Потрясающее одностраничное приложение (SPA), построенное на Tailwind CSS и принципах glassmorphism.
+- **Темная тема**: Удобный для глаз темный интерфейс по умолчанию.
+- **Интерактивность**: Обратная связь в реальном времени, плавные переходы и интуитивное управление задачами.
+
+---
+
+## 🛠️ Технологический стек
+
+| Категория | Технология |
+|-----------|------------|
+| **Frontend** | HTML5, Tailwind CSS, Vanilla JS (ES6+) |
+| **Backend** | Java 21, Spring Boot 3.4.x |
+| **Security** | Spring Security, JWT, Refresh Tokens |
+| **Database** | PostgreSQL 16 (Persistence), H2 (Dev/Testing) |
+| **Caching** | Redis 7 |
+| **Infrastructure**| Nginx (Reverse Proxy), Docker, Docker Compose |
+| **Documentation** | Swagger UI (OpenAPI 3.0) |
+
+---
+
+## 🏗️ Структура проекта
+
+```text
+chronyqor/
+├── frontend/           # Исходные файлы SPA
+├── src/main/java/      # Backend на Spring Boot
+│   ├── config/         # Конфигурации кэша, JPA и приложения
+│   ├── controller/     # REST эндпоинты (Auth, Tasks, Health)
+│   ├── domain/         # Сущности (User, Task, RefreshToken)
+│   ├── security/       # Логика JWT и фильтры безопасности
+│   └── service/        # Бизнес-логика и уведомления
+├── src/main/resources/
+│   └── db/migration/   # SQL миграции Flyway (с V1 по V4)
+├── nginx.conf          # Конфигурация прокси Nginx
+└── docker-compose.yml  # Оркестрация всего стека
+```
 
 ---
 
 ## 🚀 Быстрый старт
 
-### Предварительные требования
-- JDK 21
-- Docker и Docker Compose
-- Gradle (опционально, используется wrapper)
+### Требования
+- **Docker и Docker Compose**
 
-### Запуск через Docker Compose
+### Быстрый запуск (Docker)
+Самый простой способ запустить весь стек — использовать Docker Compose:
+
 ```bash
-# Собрать и запустить весь стек (бэкенд + база)
 docker-compose up --build
-
-# Приложение будет доступно на:
-# - API: http://localhost:8080
-# - PostgreSQL: порт 5432
 ```
 
-### Локальная сборка и запуск
+**Точки доступа:**
+- **Фронтенд**: [http://localhost](http://localhost) (порт 80)
+- **Swagger UI**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- **API Base**: `http://localhost:8080/api/v1`
+
+### Локальная разработка (Backend)
+Для запуска бэкенда отдельно с базой данных H2 (в памяти):
 ```bash
-# Собрать проект
-./gradlew build
-
-# Запустить приложение (профиль dev)
-./gradlew bootRun
-
-# Или запустить JAR напрямую
-java -jar build/libs/planicore-1.0.0.jar
-```
-
-Приложение запустится на `http://localhost:8080`.
-
----
-
-## 🌐 Профили конфигурации
-
-Проект поддерживает несколько профилей:
-
-| Профиль | База данных | Назначение |
-|--------|------------|-----------|
-| `default` | — | Общие настройки |
-| `dev` | H2 in-memory | Разработка, H2-консоль доступна по `/h2-console` |
-| `test` | Testcontainers + PostgreSQL | Интеграционные тесты |
-| `prod` | PostgreSQL | Продакшен, настройки логирования и безопасности |
-
-Активация профиля:
-```bash
-# Через переменную окружения
-SPRING_PROFILES_ACTIVE=prod ./gradlew bootRun
-
-# Или в docker-compose.yml
-environment:
-  SPRING_PROFILES_ACTIVE: prod
+./gradlew bootRun --args='--spring.profiles.active=dev'
 ```
 
 ---
 
 ## 🧪 Тестирование
 
-Запуск тестов:
+Chronyqor использует **Testcontainers** для надежного интеграционного тестирования с реальным экземпляром PostgreSQL.
+
 ```bash
 ./gradlew test
 ```
 
-- **Юнит-тесты**: проверяют логику сервисов.
-- **Интеграционные тесты**: используют `Testcontainers` для запуска реального PostgreSQL во время тестов.
+---
 
-Результаты тестов доступны в:
-```
-build/reports/tests/test/index.html
-```
+## 📊 Мониторинг и состояние
+
+- **Health Status**: `GET /actuator/health`
+- **Метрики**: `GET /actuator/metrics`
+- **Prometheus**: `GET /actuator/prometheus`
 
 ---
 
-## 🤖 CI/CD Pipeline
-
-Настроена автоматическая пайплайн в GitHub Actions:
-
-1. **Build & Test** — запускается при пуше или PR в `master`.
-2. **Build Docker Image** — собирает образ и отправляет в Docker Hub.
-3. **Deploy to Production** — деплоит на сервер при пуше в `main`.
-
-> ⚠️ Для работы CI/CD необходимо настроить секреты в GitHub:
-> - `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`
-> - `PROD_SERVER_HOST`, `PROD_SERVER_USER`, `PROD_SSH_KEY`
-
----
-
-## 📦 Архитектура проекта
-
-```
-src/main/java/org/planicore/
-├── server/
-│   ├── controller/     # REST-контроллеры
-│   ├── domain/         # JPA-сущности
-│   ├── dto/            # Data Transfer Objects
-│   ├── mapper/         # MapStruct-мапперы
-│   ├── repository/     # Spring Data JPA репозитории
-│   ├── service/        # Бизнес-логика
-│   └── HealthController.java
-└── PlanicoreApplication.java
-```
-
----
-
-## 🔄 API Endpoints (Postman)
-
-Готовые коллекции Postman находятся в папке `postmann/`:
-- `todo-api.postman_collection.json` — основные запросы
-- `todo-api-dev.postman_environment.json` — переменные для dev
-- `todo-api-prod.postman_environment.json` — переменные для prod
-
-Пример запроса на создание задачи:
-```json
-POST {{baseUrl}}/api/v1/tasks
-Content-Type: application/json
-
-{
-  "title": "Buy groceries",
-  "description": "Milk, bread, eggs",
-  "status": "TODO",
-  "dueDate": "2025-09-20T18:00:00"
-}
-```
-
----
-
-## 📂 Конфигурация
-
-Основные файлы конфигурации:
-- `src/main/resources/application.yml` — основная конфигурация с профилями
-- `src/main/resources/application.properties` — общие свойства
-- `src/main/resources/db/migration/V1__create_tasks_table.sql` — SQL-миграция
-
----
-
-## 🐳 Docker
-
-- **Бэкенд**: `Dockerfile` в корне проекта использует multi-stage сборку.
-- **База данных**: PostgreSQL 16 в `docker-compose.yml`.
-- **Health Check**: проверка через `/actuator/health`.
-
----
-
-## 📊 Мониторинг
-
-Доступные эндпоинты:
-- `GET /actuator/health` — статус приложения
-- `GET /actuator/info` — информация о версии
-- `GET /actuator/metrics` — метрики (Prometheus-совместимо)
-- `GET /ready` — простой readiness check
-
----
+## 📖 Документация
+Подробные инструкции можно найти в [Руководстве пользователя](USER_GUIDE.md).
 
 ## 📄 Лицензия
-
-Проект не имеет лицензии (по умолчанию — авторские права).
-
----
-
-## 🙋 Поддержка
-
-Для вопросов и предложений используйте Issues на GitHub.
+Этот проект распространяется под лицензией MIT.
