@@ -1,210 +1,115 @@
-# `planicore` – REST-API zur Aufgabenverwaltung (To-Do)
+# Chronyqor — Enterprise Full-Stack Aufgabenverwaltung
 
-Dieses Projekt ist eine moderne Spring Boot-Anwendung, die eine RESTful-API zur Verwaltung von Aufgaben (To-Do) bereitstellt. Es wurde nach aktuellen Best Practices entwickelt und enthält automatisierte CI/CD-Pipelines, Containerisierung sowie umfassende Testwerkzeuge.
-
----
-
-## 📋 Übersicht
-
-**`planicore`** ist die Backend-Komponente einer Aufgabenverwaltungsanwendung. Sie bietet vollständige CRUD-Operationen (Erstellen, Lesen, Aktualisieren, Löschen) für die Entität `Task` sowie standardmäßige Überwachungsendpunkte über Spring Boot Actuator.
-
-### 🔧 Funktionen
-- Erstellen einer neuen Aufgabe (`POST /api/v1/tasks`)
-- Abrufen aller Aufgaben (`GET /api/v1/tasks`)
-- Abrufen einer Aufgabe anhand ihrer ID (`GET /api/v1/tasks/{id}`)
-- Aktualisieren einer Aufgabe (`PUT /api/v1/tasks/{id}`)
-- Löschen einer Aufgabe (`DELETE /api/v1/tasks/{id}`)
-- Health- und Readiness-Checks (`GET /actuator/health`, `GET /ready`)
-
-Jede Aufgabe enthält:
-- Titel (`title`)
-- Beschreibung (`description`)
-- Status: `TODO`, `IN_PROGRESS`, `DONE`
-- Fälligkeitsdatum (`dueDate`)
-- Erstellungs- und Aktualisierungszeitpunkte
+Chronyqor ist eine umfassende, produktionsreife Full-Stack-Anwendung. Sie bietet eine sichere Spring Boot REST-API, eine hochperformante Redis-Caching-Schicht und ein hochwertiges Frontend im Glassmorphism-Design. Basierend auf modernen Architekturmustern legt sie besonderen Wert auf Sicherheit, Skalierbarkeit und ein erstklassiges Benutzererlebnis.
 
 ---
 
-## 🛠️ Technologien
+## 🚀 Hauptmerkmale
 
-| Kategorie | Verwendete Technologien |
-|--------|-------------------|
-| **Sprache & Plattform** | Java 21, Spring Boot 3.5.5 |
-| **Build-Tool** | Gradle 8.14.3 |
-| **ORM & Datenbank** | Spring Data JPA, Hibernate, PostgreSQL (Produktion), H2 (Entwicklung/Test) |
-| **Datenbank-Migrationen** | Flyway |
-| **DTO-Mapping** | MapStruct 1.5.5 |
-| **Testen** | JUnit 5, Testcontainers, Mockito |
-| **Containerisierung** | Docker, Docker Compose |
-| **CI/CD** | GitHub Actions |
-| **API-Dokumentation** | Postman-Sammlung |
+### 🛡️ Erweiterte Sicherheit
+- **JWT & Refresh Tokens**: Sichere zustandslose Authentifizierung mit rotierenden Refresh-Tokens für langlebige Sitzungen.
+- **Account Lockout**: Schutz gegen Brute-Force-Angriffe durch Sperrung des Kontos nach 5 aufeinanderfolgenden fehlgeschlagenen Login-Versuchen.
+- **Mandantentrennung**: Kryptografisch sichere Datentrennung; Benutzer haben ausschließlich Zugriff auf ihre eigenen Daten.
+
+### ⚡ Performance & Skalierbarkeit
+- **Redis Caching**: Hochgeschwindigkeits-Caching für Aufgabenabfragen zur Minimierung der Datenbanklast.
+- **Pagination & Sortierung**: Effiziente Datenverarbeitung durch Spring Data Pagination.
+- **Optimiertes Docker**: Multi-Stage-Builds und Layered JARs für schnelle Bereitstellung.
+
+### 📋 Enterprise-Logik
+- **Vollständiges Audit-Logging**: Automatische Nachverfolgung von `createdBy` und `lastModifiedAt` mittels JPA Auditing.
+- **E-Mail-Benachrichtigungen**: Integrierter Mail-Service für Willkommensnachrichten und Systembenachrichtigungen.
+- **Standardisierte API**: RFC 9457 konforme Fehlerbehandlung und umfassende OpenAPI/Swagger-Dokumentation.
+
+### 🎨 Premium-Frontend
+- **Modernes UI**: Eine beeindruckende Single-Page-Anwendung (SPA), erstellt mit Tailwind CSS und Glassmorphism-Prinzipien.
+- **Dark Mode**: Augenfreundliches, kontrastreiches dunkles Design standardmäßig aktiviert.
+- **Interaktiv**: Echtzeit-Feedback, flüssige Übergänge und intuitive Aufgabenverwaltung.
 
 ---
 
-## 🚀 Schnellstart
+## 🛠️ Technologie-Stack
+
+| Kategorie | Technologie |
+|-----------|-------------|
+| **Frontend** | HTML5, Tailwind CSS, Vanilla JS (ES6+) |
+| **Backend** | Java 21, Spring Boot 3.4.x |
+| **Sicherheit** | Spring Security, JWT, Refresh Tokens |
+| **Datenbank** | PostgreSQL 16 (Persistenz), H2 (Entwicklung/Test) |
+| **Caching** | Redis 7 |
+| **Infrastruktur**| Nginx (Reverse Proxy), Docker, Docker Compose |
+| **Dokumentation** | Swagger UI (OpenAPI 3.0) |
+
+---
+
+## 🏗️ Projektstruktur
+
+```text
+chronyqor/
+├── frontend/           # Premium SPA Quelldateien
+├── src/main/java/      # Spring Boot Backend
+│   ├── config/         # Cache-, JPA- und App-Konfigurationen
+│   ├── controller/     # REST-Endpunkte (Auth, Tasks, Health)
+│   ├── domain/         # Entitäten (User, Task, RefreshToken)
+│   ├── security/       # JWT-Logik und Sicherheitsfilter
+│   └── service/        # Geschäftslogik und Benachrichtigungen
+├── src/main/resources/
+│   └── db/migration/   # Flyway SQL-Migrationen (V1 bis V4)
+├── nginx.conf          # Nginx Proxy-Konfiguration
+└── docker-compose.yml  # Full-Stack Orchestrierung
+```
+
+---
+
+## 🚀 Erste Schritte
 
 ### Voraussetzungen
-- JDK 21
-- Docker und Docker Compose
-- Gradle (optional, Wrapper enthalten)
+- **Docker & Docker Compose**
 
-### Ausführen mit Docker Compose
+### Schnellstart (Docker)
+Der einfachste Weg, den gesamten Stack auszuführen, ist die Verwendung von Docker Compose:
+
 ```bash
-# Build und Start des gesamten Stacks (Backend + Datenbank)
 docker-compose up --build
-
-# Die Anwendung ist verfügbar unter:
-# - API: http://localhost:8080
-# - PostgreSQL: Port 5432
 ```
 
-### Lokaler Build und Start
+**Zugriffspunkte:**
+- **Frontend**: [http://localhost](http://localhost) (Port 80)
+- **Swagger Docs**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- **API Basis**: `http://localhost:8080/api/v1`
+
+### Lokale Backend-Entwicklung
+Um das Backend unabhängig mit einer H2 In-Memory-Datenbank auszuführen:
 ```bash
-# Projekt bauen
-./gradlew build
-
-# Anwendung starten (Entwicklungsprofil)
-./gradlew bootRun
-
-# Oder JAR direkt ausführen
-java -jar build/libs/planicore-1.0.0.jar
-```
-
-Die Anwendung startet unter `http://localhost:8080`.
-
----
-
-## 🌐 Konfigurationsprofile
-
-Das Projekt unterstützt mehrere Profile:
-
-| Profil | Datenbank | Zweck |
-|--------|---------|--------|
-| `default` | — | Allgemeine Einstellungen |
-| `dev` | H2 im Arbeitsspeicher | Entwicklung, H2-Konsole verfügbar unter `/h2-console` |
-| `test` | Testcontainers + PostgreSQL | Integrationstests |
-| `prod` | PostgreSQL | Produktivumgebung mit erweiterter Protokollierung und Sicherheit |
-
-Aktivierung eines Profils:
-```bash
-# Mit Umgebungsvariable
-SPRING_PROFILES_ACTIVE=prod ./gradlew bootRun
-
-# Oder in docker-compose.yml
-environment:
-  SPRING_PROFILES_ACTIVE: prod
+./gradlew bootRun --args='--spring.profiles.active=dev'
 ```
 
 ---
 
 ## 🧪 Tests
 
-Ausführen der Tests:
+Chronyqor nutzt **Testcontainers** für robuste Integrationstests gegen eine echte PostgreSQL-Instanz.
+
 ```bash
 ./gradlew test
 ```
 
-- **Unit-Tests**: Überprüfen der Service-Logik.
-- **Integrationstests**: Nutzen `Testcontainers`, um während der Tests eine echte PostgreSQL-Instanz zu starten.
+---
 
-Testergebnisse sind verfügbar unter:
-```
-build/reports/tests/test/index.html
-```
+## 📊 Monitoring & Status
 
-Alle Tests wurden erfolgreich durchgeführt.
+- **Health Status**: `GET /actuator/health`
+- **Metriken**: `GET /actuator/metrics`
+- **Prometheus**: `GET /actuator/prometheus`
 
 ---
 
-## 🤖 CI/CD-Pipeline
-
-Eine automatisierte Pipeline ist mit GitHub Actions konfiguriert:
-
-1. **Build & Test** – Wird bei Push oder PR in `master` ausgeführt.
-2. **Docker-Image bauen** – Baut das Image und pusht es nach Docker Hub.
-3. **In Produktion deployen** – Deployt auf den Produktionsserver bei Push in `main`.
-
-> ⚠️ Für die CI/CD muss Folgendes in GitHub konfiguriert werden:
-> - `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`
-> - `PROD_SERVER_HOST`, `PROD_SERVER_USER`, `PROD_SSH_KEY`
-
----
-
-## 📦 Projektstruktur
-
-```
-src/main/java/org/planicore/
-├── server/
-│   ├── controller/     # REST-Controller
-│   ├── domain/         # JPA-Entitäten
-│   ├── dto/            # Data Transfer Objects
-│   ├── mapper/         # MapStruct-Mapper
-│   ├── repository/     # Spring Data JPA-Repositories
-│   ├── service/        # Geschäftslogik
-│   └── HealthController.java
-└── PlanicoreApplication.java
-```
-
----
-
-## 🔄 API-Endpunkte (Postman)
-
-Fertige Postman-Sammlungen befinden sich im Ordner `postmann/`:
-- `todo-api.postman_collection.json` — Haupt-API-Anfragen
-- `todo-api-dev.postman_environment.json` — Entwicklungsvariablen
-- `todo-api-prod.postman_environment.json` — Produktionsvariablen
-
-Beispiel: Aufgabe erstellen
-```json
-POST {{baseUrl}}/api/v1/tasks
-Content-Type: application/json
-
-{
-  "title": "Einkaufen",
-  "description": "Milch, Brot, Eier",
-  "status": "TODO",
-  "dueDate": "2025-09-20T18:00:00"
-}
-```
-
----
-
-## 📂 Konfigurationsdateien
-
-Wichtige Konfigurationsdateien:
-- `src/main/resources/application.yml` — Hauptkonfiguration mit Profilen
-- `src/main/resources/application.properties` — allgemeine Eigenschaften
-- `src/main/resources/db/migration/V1__create_tasks_table.sql` — SQL-Migrationsdatei
-
----
-
-## 🐳 Docker
-
-- **Backend**: Multi-stage `Dockerfile` im Hauptverzeichnis.
-- **Datenbank**: PostgreSQL 16 in `docker-compose.yml`.
-- **Health Check**: Implementiert über `/actuator/health`.
-
----
-
-## 📊 Überwachung
-
-Verfügbare Endpunkte:
-- `GET /actuator/health` — Anwendungsstatus
-- `GET /actuator/info` — Versionsinformation
-- `GET /actuator/metrics` — Prometheus-kompatible Metriken
-- `GET /ready` — einfacher Readiness-Check
-
----
+## 📖 Dokumentation
+Detaillierte Anweisungen finden Sie im [User Guide](USER_GUIDE.md).
 
 ## 📄 Lizenz
-
-Keine Lizenz angegeben (alle Rechte vorbehalten).
-
----
-
-## 🙋 Unterstützung
-
-Für Fragen oder Anregungen nutzen Sie bitte die GitHub Issues.
+Dieses Projekt ist unter der MIT-Lizenz lizenziert.
+die GitHub Issues.
 
 ---
 

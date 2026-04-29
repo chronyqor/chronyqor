@@ -1,24 +1,34 @@
-# Stage 1: Сборка приложения
-FROM gradle:8.8-jdk21 AS build
-WORKDIR /home/gradle/project
+# Stage 1: Build the application
+FROM gradle:8.11.1-jdk21 AS build
+WORKDIR /app
 COPY . .
-RUN gradle build --no-daemon -x test
+RUN gradle bootJar --no-daemon -x test
 
-# Stage 2: Финальный образ
+# Stage 2: Extract layers
+FROM eclipse-temurin:21-jre-jammy AS extract
+WORKDIR /app
+COPY --from=build /app/build/libs/*.jar app.jar
+RUN java -Djarmode=layertools -jar app.jar extract
+
+# Stage 3: Final image
 FROM eclipse-temurin:21-jre-jammy
-EXPOSE 8080
 WORKDIR /app
 
-# Копируем JAR и конфигурационные файлы
-COPY --from=build /home/gradle/project/build/libs/*.jar app.jar
-COPY --from=build /home/gradle/project/src/main/resources/application.properties /app/config/application.properties
+# Use a non-root user for security
+RUN groupadd -r spring && useradd -r -g spring spring
+USER spring:spring
 
-# Настройка запуска
-RUN echo 'java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app/app.jar' > /app/start.sh \
-    && chmod +x /app/start.sh
+COPY --from=extract /app/dependencies/ ./
+COPY --from=extract /app/spring-boot-loader/ ./
+COPY --from=extract /app/snapshot-dependencies/ ./
+COPY --from=extract /app/application/ ./
 
-# Health check для мониторинга состояния приложения
-HEALTHCHECK --interval=30s --timeout=10s --retries=5 \
+EXPOSE 8080
+
+# Environment variables for JVM tuning
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS org.springframework.boot.loader.launch.JarLauncher"]
+
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
   CMD curl -f http://localhost:8080/actuator/health || exit 1
-
-ENTRYPOINT ["/app/start.sh"]

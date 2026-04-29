@@ -8,9 +8,9 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
 }
 
-group = "org.planicore"
+group = "org.chronyqor"
 version = "1.0.0"
-description = "planicore"
+description = "chronyqor"
 
 java {
     toolchain {
@@ -27,7 +27,17 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")
+
+    // JWT for Authentication
+    implementation("io.jsonwebtoken:jjwt-api:0.12.6")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
 
     // Мониторинг и метрики
     implementation("io.micrometer:micrometer-registry-prometheus")
@@ -53,6 +63,8 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:postgresql")
+    testImplementation("org.springframework.security:spring-security-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -77,7 +89,7 @@ tasks.named<BootJar>("bootJar") {
             mapOf(
                 "Implementation-Title" to project.name,
                 "Implementation-Version" to project.version,
-                "Start-Class" to "org.planicore.PlanicoreApplication",
+                "Start-Class" to "org.chronyqor.ChronyqorApplication",
                 "Main-Class" to "org.springframework.boot.loader.launch.JarLauncher",
                 "Built-By" to System.getProperty("user.name"),
                 "Built-Date" to Date().toString(),

@@ -1,211 +1,111 @@
-# `planicore` — REST API for Task Management (To-Do)
+# Chronyqor — Enterprise Full-Stack Task Management
 
-This project is a modern Spring Boot application that implements a RESTful API for managing tasks (To-Do). It is built using best practices and includes automated CI/CD pipelines, containerization, and comprehensive testing tools.
-
----
-
-## 📋 Overview
-
-**`planicore`** is the backend component of a task management application. It provides full CRUD operations (Create, Read, Update, Delete) for the `Task` entity, along with standard monitoring endpoints via Spring Boot Actuator.
-
-### 🔧 Features
-- Create a new task (`POST /api/v1/tasks`)
-- Retrieve all tasks (`GET /api/v1/tasks`)
-- Get a task by ID (`GET /api/v1/tasks/{id}`)
-- Update a task (`PUT /api/v1/tasks/{id}`)
-- Delete a task (`DELETE /api/v1/tasks/{id}`)
-- Health and readiness checks (`GET /actuator/health`, `GET /ready`)
-
-Each task includes:
-- Title (`title`)
-- Description (`description`)
-- Status: `TODO`, `IN_PROGRESS`, `DONE`
-- Due date (`dueDate`)
-- Creation and update timestamps
+Chronyqor is a comprehensive, production-ready full-stack application. It features a secure Spring Boot REST API, a high-performance Redis caching layer, and a premium glassmorphism-style frontend. Built with modern architectural patterns, it emphasizes security, scalability, and exceptional user experience.
 
 ---
 
-## 🛠️ Technologies
+## 🚀 Key Features
 
-| Category | Technologies Used |
-|--------|-------------------|
-| **Language & Platform** | Java 21, Spring Boot 3.5.5 |
-| **Build Tool** | Gradle 8.14.3 |
-| **ORM & Database** | Spring Data JPA, Hibernate, PostgreSQL (prod), H2 (dev/test) |
-| **Database Migrations** | Flyway |
-| **DTO Mapping** | MapStruct 1.5.5 |
-| **Testing** | JUnit 5, Testcontainers, Mockito |
-| **Containerization** | Docker, Docker Compose |
-| **CI/CD** | GitHub Actions |
-| **API Documentation** | Postman Collection |
+### 🛡️ Advanced Security
+- **JWT & Refresh Tokens**: Secure stateless authentication with rotating refresh tokens for long-lived sessions.
+- **Account Lockout**: Brute-force protection that locks accounts after 5 consecutive failed login attempts.
+- **Multi-Tenant Isolation**: Cryptographically secure data ownership; users only access their own data.
+
+### ⚡ Performance & Scalability
+- **Redis Caching**: High-speed caching for task retrieval to minimize database load.
+- **Pagination & Sorting**: Efficient data handling using Spring Data Pagination.
+- **Optimized Docker**: Multi-stage builds and layered JARs for rapid deployment.
+
+### 📋 Enterprise Logic
+- **Full Audit Logging**: Automated tracking of `createdBy` and `lastModifiedAt` using JPA Auditing.
+- **Email Notifications**: Integrated mail service for welcome messages and system notifications.
+- **Standardized API**: RFC 9457 compliant error handling and comprehensive OpenAPI/Swagger documentation.
+
+### 🎨 Premium Frontend
+- **Modern UI**: A stunning single-page application built with Tailwind CSS and glassmorphism principles.
+- **Dark Mode**: Eye-friendly, high-contrast dark theme by default.
+- **Interactive**: Real-time feedback, smooth transitions, and intuitive task management.
 
 ---
 
-## 🚀 Quick Start
+## 🛠️ Technology Stack
+
+| Category | Technology |
+|----------|------------|
+| **Frontend** | HTML5, Tailwind CSS, Vanilla JS (ES6+) |
+| **Backend** | Java 21, Spring Boot 3.4.x |
+| **Security** | Spring Security, JWT, Refresh Tokens |
+| **Database** | PostgreSQL 16 (Persistence), H2 (Dev/Testing) |
+| **Caching** | Redis 7 |
+| **Infrastructure**| Nginx (Reverse Proxy), Docker, Docker Compose |
+| **Documentation** | Swagger UI (OpenAPI 3.0) |
+
+---
+
+## 🏗️ Project Structure
+
+```text
+chronyqor/
+├── frontend/           # Premium SPA source files
+├── src/main/java/      # Spring Boot Backend
+│   ├── config/         # Cache, JPA, and App configurations
+│   ├── controller/     # REST Endpoints (Auth, Tasks, Health)
+│   ├── domain/         # Entities (User, Task, RefreshToken)
+│   ├── security/       # JWT logic and Security filters
+│   └── service/        # Business logic and Notifications
+├── src/main/resources/
+│   └── db/migration/   # Flyway SQL migrations (V1 to V4)
+├── nginx.conf          # Nginx proxy configuration
+└── docker-compose.yml  # Full-stack orchestration
+```
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
-- JDK 21
-- Docker and Docker Compose
-- Gradle (optional, wrapper included)
+- **Docker & Docker Compose**
 
-### Running with Docker Compose
+### Quick Launch (Docker)
+The easiest way to run the entire stack is using Docker Compose:
+
 ```bash
-# Build and run the full stack (backend + database)
 docker-compose up --build
-
-# The application will be available at:
-# - API: http://localhost:8080
-# - PostgreSQL: port 5432
 ```
 
-### Local Build and Run
+**Access Points:**
+- **Frontend**: [http://localhost](http://localhost) (Port 80)
+- **Swagger Docs**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- **API Base**: `http://localhost:8080/api/v1`
+
+### Local Backend Development
+To run the backend independently with an H2 in-memory database:
 ```bash
-# Build the project
-./gradlew build
-
-# Run the application (dev profile)
-./gradlew bootRun
-
-# Or run the JAR directly
-java -jar build/libs/planicore-1.0.0.jar
-```
-
-The app will start on `http://localhost:8080`.
-
----
-
-## 🌐 Configuration Profiles
-
-The project supports multiple profiles:
-
-| Profile | Database | Purpose |
-|--------|---------|--------|
-| `default` | — | General settings |
-| `dev` | H2 in-memory | Development, H2 console available at `/h2-console` |
-| `test` | Testcontainers + PostgreSQL | Integration tests |
-| `prod` | PostgreSQL | Production environment with enhanced logging and security |
-
-Activate a profile:
-```bash
-# Using environment variable
-SPRING_PROFILES_ACTIVE=prod ./gradlew bootRun
-
-# Or set in docker-compose.yml
-environment:
-  SPRING_PROFILES_ACTIVE: prod
+./gradlew bootRun --args='--spring.profiles.active=dev'
 ```
 
 ---
 
 ## 🧪 Testing
 
-Run tests:
+Chronyqor uses **Testcontainers** for robust integration testing against a real PostgreSQL instance.
+
 ```bash
 ./gradlew test
 ```
 
-- **Unit Tests**: Verify service logic.
-- **Integration Tests**: Use `Testcontainers` to spin up a real PostgreSQL instance during testing.
+---
 
-Test results are available at:
-```
-build/reports/tests/test/index.html
-```
+## 📊 Monitoring & Health
 
-All tests passed successfully.
+- **Health Status**: `GET /actuator/health`
+- **Metrics**: `GET /actuator/metrics`
+- **Prometheus**: `GET /actuator/prometheus`
 
 ---
 
-## 🤖 CI/CD Pipeline
-
-An automated pipeline is configured using GitHub Actions:
-
-1. **Build & Test** — Runs on push or PR to `master`.
-2. **Build Docker Image** — Builds and pushes image to Docker Hub.
-3. **Deploy to Production** — Deploys to production server on push to `main`.
-
-> ⚠️ For CI/CD to work, configure the following secrets in GitHub:
-> - `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`
-> - `PROD_SERVER_HOST`, `PROD_SERVER_USER`, `PROD_SSH_KEY`
-
----
-
-## 📦 Project Structure
-
-```
-src/main/java/org/planicore/
-├── server/
-│   ├── controller/     # REST controllers
-│   ├── domain/         # JPA entities
-│   ├── dto/            # Data Transfer Objects
-│   ├── mapper/         # MapStruct mappers
-│   ├── repository/     # Spring Data JPA repositories
-│   ├── service/        # Business logic
-│   └── HealthController.java
-└── PlanicoreApplication.java
-```
-
----
-
-## 🔄 API Endpoints (Postman)
-
-Ready-to-use Postman collections are located in the `postmann/` folder:
-- `todo-api.postman_collection.json` — main API requests
-- `todo-api-dev.postman_environment.json` — dev environment variables
-- `todo-api-prod.postman_environment.json` — prod environment variables
-
-Example request to create a task:
-```json
-POST {{baseUrl}}/api/v1/tasks
-Content-Type: application/json
-
-{
-  "title": "Buy groceries",
-  "description": "Milk, bread, eggs",
-  "status": "TODO",
-  "dueDate": "2025-09-20T18:00:00"
-}
-```
-
----
-
-## 📂 Configuration Files
-
-Key configuration files:
-- `src/main/resources/application.yml` — main config with profiles
-- `src/main/resources/application.properties` — general properties
-- `src/main/resources/db/migration/V1__create_tasks_table.sql` — SQL migration script
-
----
-
-## 🐳 Docker
-
-- **Backend**: Multi-stage `Dockerfile` in the root directory.
-- **Database**: PostgreSQL 16 defined in `docker-compose.yml`.
-- **Health Check**: Implemented via `/actuator/health`.
-
----
-
-## 📊 Monitoring
-
-Available endpoints:
-- `GET /actuator/health` — application status
-- `GET /actuator/info` — version info
-- `GET /actuator/metrics` — Prometheus-compatible metrics
-- `GET /ready` — simple readiness check
-
----
+## 📖 Documentation
+Detailed instructions can be found in the [User Guide](USER_GUIDE.md).
 
 ## 📄 License
-
-No license specified (all rights reserved by default).
-
----
-
-## 🙋 Support
-
-For questions or suggestions, please use GitHub Issues.
-
----
-
-> 💡 **Tip**: Before first launch, ensure all dependencies are installed and environment variables are properly configured.
+This project is licensed under the MIT License.
